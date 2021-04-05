@@ -29,12 +29,15 @@ call plug#begin(system('echo -n "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/plugged"
 	Plug 'sjl/gundo.vim'
 	Plug 'tomtom/tcomment_vim'
 	Plug 'tpope/vim-dispatch'
+  Plug 'radenling/vim-dispatch-neovim'
 	Plug 'tpope/vim-fugitive'
 	Plug 'tpope/vim-unimpaired'
 	Plug 'vim-airline/vim-airline'
 	Plug 'vim-syntastic/syntastic'
+  Plug 'mzlogin/vim-markdown-toc'
+  Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 call plug#end()
-
 
 " ===================
 " => GENERAL CONFIG
@@ -171,6 +174,14 @@ set nobackup
 set nowb
 set noswapfile
 
+try
+  set undodir=$HOME/.config/nvim/undodir 
+  set undofile
+catch
+	silent !mkdir -p $HOME/.config/nvim/undodir 
+  set undodir=$HOME/.config/nvim/undodir 
+  set undofile
+endtry
 " ========================
 " => TABS AND INDENTATION 
 " ========================
@@ -268,6 +279,14 @@ if has("mac") || has("macunix")
   vmap <D-k> <M-k>
 endif
 
+" Map auto complete of (, ", ', [
+inoremap $1 ()<esc>i
+inoremap $2 []<esc>i
+inoremap $3 {}<esc>i
+inoremap $4 {<esc>o}<esc>O
+inoremap $q ''<esc>i
+inoremap $e ""<esc>i
+
 " Delete trailing white space on save, useful for some filetypes ;)
 fun! CleanExtraSpaces()
     let save_cursor = getpos(".")
@@ -346,3 +365,67 @@ function! VisualSelection(direction, extra_filter) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
+
+" ===========
+" => CTRL-P
+" ===========
+
+let g:ctrlp_working_path_mode = 0
+
+" Quickly find and open a file in the current working directory
+let g:ctrlp_map = '<C-f>'
+map <leader>j :CtrlP<cr>
+
+" Quickly find and open a buffer
+map <leader>b :CtrlPBuffer<cr>
+
+" Quickly find and open a recently opened file
+map <leader>f :CtrlPMRU<CR>
+
+let g:ctrlp_max_height = 20
+let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
+
+" =============
+" => NERD TREE 
+" =============
+
+let g:NERDTreeWinPos = "left"
+let NERDTreeShowHidden=0
+let g:NERDTreeWinSize=35
+map <leader>nn :NERDTreeToggle<cr>
+map <leader>nb :NERDTreeFromBookmark<Space>
+map <leader>nf :NERDTreeFind<cr>
+
+" ================
+" => Vim Markdown 
+" ================
+
+" Disable Vim Markdown folding
+let g:vim_markdown_folding_disabled=1
+
+" ====================
+" => Vim Markdown TOC 
+" ====================
+
+" Auto-update TOC on save
+let g:vmt_auto_update_on_save = 1
+
+" Disable comments for TOC 
+let g:vmt_dont_insert_fence = 1
+
+" ====================
+" => Vim Markdown TOC 
+" ====================
+
+" Open MD preview after opening .md files
+let g:mkdp_auto_start = 0
+
+" Refresh preview on leaving insert mode
+let g:mkdp_refresh_slow = 1
+
+" ====================
+" => Deoplete 
+" ====================
+
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
