@@ -12,31 +12,20 @@ endif
 
 " Install the plugins
 call plug#begin(system('echo -n "${XDG_CONFIG_HOME:-$HOME/.config}/nvim/plugged"'))
-	" Plug 'ervandew/supertab'
-	" Plug 'fatih/vim-go'
-	" Plug 'leafgarland/typescript-vim'
-	" Plug 'rust-lang/rust.vim'
-	" Plug 'tpope/vim-abolish'
-	" Plug 'tpope/vim-vinegar'
-	" Plug 'vim-airline/vim-airline-themes'
-	" Plug 'vim-test/vim-test'
-	" Plug 'vim-wiki/vim-wiki'
 	Plug 'easymotion/vim-easymotion'
+	Plug 'fatih/vim-go'
 	Plug 'kien/ctrlp.vim'
 	Plug 'morhetz/gruvbox'
 	Plug 'plasticboy/vim-markdown'
 	Plug 'preservim/nerdtree'
-	Plug 'sjl/gundo.vim'
-	Plug 'tomtom/tcomment_vim'
-	Plug 'tpope/vim-dispatch'
-  Plug 'radenling/vim-dispatch-neovim'
 	Plug 'tpope/vim-fugitive'
 	Plug 'tpope/vim-unimpaired'
 	Plug 'vim-airline/vim-airline'
+	Plug 'vim-airline/vim-airline-themes'
 	Plug 'vim-syntastic/syntastic'
   Plug 'mzlogin/vim-markdown-toc'
-  Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'radenling/vim-dispatch-neovim'
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
 
 " ===================
@@ -44,7 +33,7 @@ call plug#end()
 " ===================
 
 " Line history size
-set history=500
+set history=1024
 
 " Enable filetype plugins
 filetype plugin on
@@ -220,10 +209,6 @@ map <leader>bd :Bclose<cr>:tabclose<cr>gT
 " Close all the buffers
 map <leader>ba :bufdo bd<cr>
 
-" Go to prev and next buffer
-map <leader>l :bnext<cr>
-map <leader>h :bprevious<cr>
-
 " Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
@@ -386,7 +371,7 @@ let g:ctrlp_max_height = 20
 let g:ctrlp_custom_ignore = 'node_modules\|^\.DS_Store\|^\.git\|^\.coffee'
 
 " =============
-" => NERD TREE 
+" => Nerd Tree
 " =============
 
 let g:NERDTreeWinPos = "left"
@@ -423,9 +408,29 @@ let g:mkdp_auto_start = 0
 " Refresh preview on leaving insert mode
 let g:mkdp_refresh_slow = 1
 
-" ====================
-" => Deoplete 
+" ===================
+" => Airline Themes 
 " ====================
 
-" Use deoplete.
-let g:deoplete#enable_at_startup = 1
+let g:airline_theme='peaksea'
+
+" =========================
+" => Conquer of Completion
+" =========================
+
+let g:go_def_mapping_enabled = 0
+" Add automatic installation of coc-json coc-html coc-sh, coc-css, graphql, coc-tsserver and coc-go if not available
+
+" ===================
+" => Vim Go
+" ====================
+
+function DetectGoHtmlTmpl()
+    if expand('%:e') == "gohtml"
+        set filetype=gohtmltmpl 
+    endif
+endfunction
+
+augroup filetypedetect
+    au! BufRead,BufNewFile * call DetectGoHtmlTmpl()
+augroup END
